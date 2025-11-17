@@ -1,0 +1,42 @@
+[
+    {
+        "id": 1,
+        "img": "https://images.pexels.com/photos/5746087/pexels-photo-5746087.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+        "title": "Camiseta Básica",
+        "desc": "Camiseta unisex 100% algodón, ideal para uso diario.",
+        "price": 12.99,
+        "stock": 100
+    },
+    {
+        "id": 2,
+        "img": "https://images.pexels.com/photos/1092644/pexels-photo-1092644.jpeg",
+        "title": "Smartphone Android",
+        "desc": "Pantalla de 6.5”, 128 GB de almacenamiento, cámara dual.",
+        "price": 249.99,
+        "stock": 100
+    },
+    {
+        "id": 3,
+        "img": "https://images.pexels.com/photos/373945/pexels-photo-373945.jpeg",
+        "title": "Auriculares Bluetooth",
+        "desc": "Sonido envolvente, cancelación de ruido, 20h de batería.",
+        "price": 89.99,
+        "stock": 100
+    },
+    {
+        "id": 4,
+        "img": "https://images.pexels.com/photos/18105/pexels-photo.jpg",
+        "title": "Laptop Ultraliviana",
+        "desc": "Procesador Intel i5, 8GB RAM, SSD 256GB. Ideal para trabajo y estudio.",
+        "price": 749.99,
+        "stock": 100
+    },
+    {
+        "id": 5,
+        "img": "https://images.pexels.com/photos/1124466/pexels-photo-1124466.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+        "title": "Zapatillas Urbanas",
+        "desc": "Cómodas, livianas y con diseño moderno para el día a día.",
+        "price": 59.99,
+        "stock": 100
+    }
+]

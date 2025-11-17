@@ -1,0 +1,25 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Noto Sans", sans-serif;
+}
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+:root {
+  --primer-color: #161616;
+  --segundo-color: #f2f2f2;
+  --acento-color: #ffcc00;
+}
+li {
+  list-style: none;
+}
+a {
+  text-decoration: none;
+}

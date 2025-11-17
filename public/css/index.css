@@ -1,0 +1,65 @@
+.card {
+  width: 10%;
+  cursor: pointer;
+}
+.card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+.productos {
+  display: grid;
+  place-items: center;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 30px;
+}
+.card {
+  width: 100%;
+  height: auto;
+  transition: all 0.3s ease;
+}
+.card-title {
+  color: var(--primer-color);
+}
+.card-text {
+  color: var(--primer-color);
+}
+.btn-fav{
+  background-color: transparent;
+  border: none;
+}
+main {
+  position: relative;
+  min-height: 100vh;
+  margin-top: 22px;
+}
+main h2 {
+  font-size: 2em;
+  margin-left: 25px;
+}
+.tituloArriba{
+  display: grid;
+  justify-content: space-between;
+  align-items: center;
+}
+.tituloArriba button{
+  margin-right: 25px;
+}
+main button{
+  background: transparent;
+  border: 1px solid rgba(128, 128, 128, 0.479);
+  border-radius: 5px;
+  padding: 5px;
+}
+.actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+
+#form{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  margin: 25px;
+}

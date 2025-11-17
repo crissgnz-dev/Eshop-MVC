@@ -1,0 +1,11 @@
+//Registrar usuario (register)
+//Iniciar Sesion (login)
+//mostrarPerfil (showAccount)
+//actualizar Datos (updateAccount)
+//subir foto perfil (UploadImage)
+//Cambiar contraseña (changePassword)
+//Recuperar contraseña (setPassword)
+//Eliminar cuenta (deleteAccount)
+
+//Como Administrador: 
+//reporte de usuarios (usersReporter)
