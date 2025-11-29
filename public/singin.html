@@ -11,24 +11,62 @@
 </head>
 <body id="body">
 
-  <!--Codigo del sing in-->
   <section>
 <div class="form-box">
-<form class="form">
-    <span class="title">Inscribirse</span>
+<form class="form" id="registerForm"> <span class="title">Inscribirse</span>
     <span class="subtitle">Crea una cuenta gratuita con tu correo electrónico.</span>
     <div class="form-container">
-      <input type="text" class="input" placeholder="Full Name">
-			<input type="email" class="input" placeholder="Email">
-			<input type="password" class="input" placeholder="Password">
-    </div>
-    <button class="submit-btn">Inscribirse</button>
-</form>
+      <input type="text" class="input" placeholder="Full Name" id="regName" required> <input type="email" class="input" placeholder="Email" id="regEmail" required> <input type="password" class="input" placeholder="Password" id="regPass" required> </div>
+    <button class="submit-btn" id="registerBtn">Inscribirse</button> </form>
 <div class="form-section">
   <p>¿Tenes una cuenta? <a href="login.html">Acceso</a> </p>
 </div>
 </div>
 </section>
-<script src="java/script.js"></script>
+
+<script>
+    // Eliminar la referencia a script.js si no se usa:
+    // <script src="java/script.js">
+
+    document.getElementById('registerBtn').addEventListener('click', async (e) => {
+        e.preventDefault(); // Previene el envío por defecto del formulario
+
+        const fullName = document.getElementById('regName').value;
+        const email = document.getElementById('regEmail').value;
+        const password = document.getElementById('regPass').value;
+
+        if (!fullName || !email || !password) {
+            alert("Por favor, completa todos los campos.");
+            return;
+        }
+
+        const url = '/users/register';
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    Name: fullName, // Asegúrate que el campo Name coincida con tu base de datos
+                    Email: email,
+                    Pass: password
+                })
+            });
+
+            const data = await response.json();
+            
+            if (response.status === 201) { // 201 Created
+                alert(`Registro exitoso: ${data.message}`);
+                window.location.href = 'login.html'; // Redirigir al login
+            } else {
+                alert(`Error en el registro: ${data.message}`);
+            }
+        } catch (error) {
+            console.error("Error de red o servidor:", error);
+            alert("Error al intentar registrar el usuario.");
+        }
+    });
+</script>
 </body>
 </html>

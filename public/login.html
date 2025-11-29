@@ -18,23 +18,61 @@
 <body class="body">
 
 
-     <!-- Codigo del login--> 
      <section>
-<form class="form-control" action="">
-    <p class="title">Acceso</p>
+<form class="form-control" action="" id="loginForm"> <p class="title">Acceso</p>
     <div class="input-field">
-      <input required="" class="input" type="text" />
-      <label class="label" for="input">Enter Email</label>
+      <input required="" class="input" type="text" id="email_login" /> <label class="label" for="input">Enter Email</label>
     </div>
     <div class="input-field">
-      <input required="" class="input" type="password" />
-      <label class="label" for="input">Enter Password</label>
+      <input required="" class="input" type="password" id="pass_login" /> <label class="label" for="input">Enter Password</label>
     </div>
     <a href="RecoverPassword.html">¿Olvidaste tu contraseña?</a>
-    <button class="submit-btn">Inscribirse</button>
-  </form>  
+    <button class="submit-btn" id="loginBtn">Acceder</button> </form>  
+    
   </section>
 
-  <script src="java/script.js"></script>
+<script>
+    // Eliminar la referencia a script.js si no se usa:
+    // <script src="java/script.js">
+
+    document.getElementById('loginBtn').addEventListener('click', async (e) => {
+        e.preventDefault(); // Previene el envío por defecto del formulario
+
+        const email = document.getElementById('email_login').value;
+        const password = document.getElementById('pass_login').value;
+
+        if (!email || !password) {
+            alert("Por favor, completa ambos campos.");
+            return;
+        }
+
+        const url = '/users/login';
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    Email: email,
+                    Pass: password
+                })
+            });
+
+            const data = await response.json();
+            
+            if (response.status === 202) { // 202 Accepted (Sesión iniciada)
+                alert(`Sesión iniciada: Bienvenido/a ${data.data}`);
+                // Redirigir al dashboard o página de cuenta
+                // window.location.href = 'account.html'; 
+            } else {
+                alert(`Error en el inicio de sesión: ${data.message}`); // Credenciales inválidas (401)
+            }
+        } catch (error) {
+            console.error("Error de red o servidor:", error);
+            alert("Error al intentar iniciar sesión.");
+        }
+    });
+</script>
 </body>
 </html>

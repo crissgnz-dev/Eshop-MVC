@@ -1,4 +1,3 @@
-
 import { verifyToken, verifyT } from "../middlewares/verify-token-cookie.js"
 import { Router } from "express"
 const router = Router()
@@ -17,8 +16,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage })
 
-// const upload = multer({ dest: 'uploads/' })
-
 import {
     verifySesionOpen,
     register,
@@ -28,7 +25,8 @@ import {
     updateAccount,
     uploadImage,
     setPassword,
-    deleteAccount
+    deleteAccount,
+    recoverPassword 
  } from "../controllers/users.controllers.js"
 
 
@@ -38,7 +36,8 @@ router.post('/register', register)
 router.post('/login', login)
 router.get('/logout', logout)
 
-//rutas protegidas
+router.put('/recoverPassword', recoverPassword) // <-- RUTA AÑADIDA
+
 router.get('/account', verifyToken, showAccount)
 router.put('/upDate', verifyToken, updateAccount)
 router.put('/setPassword', verifyToken, setPassword)

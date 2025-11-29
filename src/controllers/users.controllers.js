@@ -32,7 +32,7 @@ export const register = async (req, res) => {
 
     //verifico que el usuario no exista en la db
     const exists = await model.getUserByEmail(Email)
-    if (exists.errno) { return res.status(500).json({ message: `Error en consulta para verificar duplicado de usuarios ${rows.errno}` }) }
+    if (exists.errno) { return res.status(500).json({ message: `Error en consulta para verificar duplicado de usuarios ${exists.errno}` }) }
     if (exists[0]) { return res.json({ message: "Este correo ya se encuentra registrado" }) }
 
     //si no existe, encripto contraseña y registro
@@ -60,7 +60,7 @@ export const login = async (req, res) => {
     //verifico existencia del usuario por email en la db
     const user = await model.getUserByEmail(Email)
 
-    if (user.errno) { return res.status(500).send(`Error en consulta, buscando usuario ${rows.errno}`) }
+    if (user.errno) { return res.status(500).send(`Error en consulta, buscando usuario ${user.errno}`) }
     if (!user[0]) { return res.status(401).json({ message: "Credenciales invalidas" }) }
 
 
@@ -193,4 +193,40 @@ export const uploadImage = async(req, res) => {
     //  si es igual a cero no se modifico ningun registro
     if (rows.affectedRows == 0) { return res.status(404).json({message: 'El usuario no existe'}) }
     res.json({message: 'datos actualizados'})
+}
+
+// =========================================================================
+// FUNCION NUEVA: recoverPassword (Para uso público/sin token)
+// NOTA: En producción, esto debería usar un mecanismo de token por email para ser seguro.
+// =========================================================================
+export const recoverPassword = async(req, res) => {
+    // desestructuro email y contraseña nueva del body
+    const { Email, Pass } = req.body
+
+    // verifico que los datos se hayan completado
+    if (!Email || !Pass) {
+        return res.status(422).json({ message: "Email y nueva contraseña requeridos" })
+    }
+
+    // 1. Verifico existencia del usuario por email en la db
+    const user = await model.getUserByEmail(Email)
+
+    if (user.errno) { return res.status(500).json({ message: `Error en consulta buscando usuario ${user.errno}` }) }
+    if (!user[0]) { return res.status(404).json({ message: "Usuario no encontrado" }) } // Error 404 si el email no existe
+
+    // 2. Si existe, encripto la nueva contraseña
+    const passwordHash = await bcrypt.hash(Pass, 10)
+    const newPasswordData = { Pass: passwordHash } // {Pass: hash}
+
+    // 3. Actualizo la contraseña del usuario
+    const rows = await model.updateUser(user[0].ID_user, newPasswordData)
+
+    if (rows.errno) {
+        return res.status(500).json({message : `Error en consulta ${rows.errno}`})
+    }
+
+    if (rows.affectedRows == 0) { return res.status(404).json({message: 'No se pudo actualizar la contraseña'}) }
+
+    // Éxito
+    res.json({message: 'Contraseña actualizada exitosamente, ya puedes iniciar sesión'})
 }
