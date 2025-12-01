@@ -242,26 +242,3 @@ export const uploadImage = async(req, res) => {
     if (rows.affectedRows == 0) { return res.status(404).json({message: 'El usuario no existe'}) }
     res.json({message: 'datos actualizados'})
 }
-
-/**
- * Nueva función para que el Administrador obtenga todos los usuarios.
- * Requiere el middleware verifyAdminToken para asegurar el acceso.
- */
-export const getAllUsers = async (req, res) => {
-    try {
-        // Asume que tienes una función en el modelo que trae todos los usuarios.
-        // Es crucial que esta función NO devuelva las contraseñas hasheadas.
-        const users = await model.getAllUsersModel(); 
-
-        if (users.errno) {
-            return res.status(500).json({ message: `Error en la consulta de usuarios: ${users.errno}` });
-        }
-
-        // Si no hay errores, devuelve la lista de usuarios.
-        res.status(200).json(users);
-
-    } catch (error) {
-        console.error('Error al obtener todos los usuarios:', error);
-        res.status(500).json({ error: 'Error interno del servidor al procesar la solicitud.' });
-    }
-}

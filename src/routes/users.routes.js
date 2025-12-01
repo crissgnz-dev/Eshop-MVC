@@ -1,5 +1,5 @@
-import { verifyToken as verifyClientToken } from "../middlewares/verify-token-cookie.js" // Middleware para clientes (usa cookie)
-import { verifyToken as verifyAdminToken } from "../middlewares/verify-token.js" // Middleware para administradores (usa token en header)
+
+import { verifyToken, verifyT } from "../middlewares/verify-token-cookie.js"
 import { Router } from "express"
 const router = Router()
 
@@ -30,9 +30,8 @@ import {
     updateAccount,
     uploadImage,
     setPassword,
-    deleteAccount,
-    getAllUsers // Nuevo: Controlador para obtener todos los usuarios (Admin)
-} from "../controllers/users.controllers.js"
+    deleteAccount
+ } from "../controllers/users.controllers.js"
 
 
 // RUTAS PÚBLICAS Y DE AUTENTICACIÓN
@@ -43,19 +42,12 @@ router.post('/login', login) // Login para clientes (guarda token en cookie)
 router.post('/login/admin', loginAdmin) // Login para administradores (devuelve token en JSON)
 router.get('/logout', logout)
 
-// RUTAS PROTEGIDAS DE CLIENTE (Usan token en cookie)
-router.get('/account', verifyClientToken, showAccount)
-router.put('/upDate', verifyClientToken, updateAccount)
-router.put('/setPassword', verifyClientToken, setPassword)
-router.delete('/deleteAccount', verifyClientToken, deleteAccount)
-router.post('/image', verifyClientToken, upload.single('imagen'), uploadImage)
+//rutas protegidas
+router.get('/account', verifyToken, showAccount)
+router.put('/upDate', verifyToken, updateAccount)
+router.put('/setPassword', verifyToken, setPassword)
+router.delete('/deleteAccount', verifyToken, deleteAccount)
 
-// RUTAS PROTEGIDAS DE ADMINISTRADOR (Usan token en Authorization header)
-// Estas rutas requieren que el cliente haya usado /login/admin para obtener el token.
-router.get('/admin/panel', verifyAdminToken, (req, res) => res.json({ message: "Bienvenido al panel Admin" }));
-
-// Nueva ruta para que el administrador pueda ver la lista de todos los usuarios
-router.get('/admin/users', verifyAdminToken, getAllUsers);
-
+router.post('/image', verifyToken, upload.single('imagen'), uploadImage)
 
 export default router
