@@ -59,7 +59,9 @@ export const login = async (req, res) => {
     //verifico existencia del usuario por email en la db
     const user = await model.getUserByEmail(Email)
 
-    if (user.errno) { return res.status(500).send(`Error en consulta, buscando usuario ${user.errno}`) }
+     if (user.errno) { 
+        return res.status(500).json({ message: `Error interno del servidor al buscar usuario: ${user.errno}` }) 
+    }
     if (!user[0]) { return res.status(401).json({ message: "Credenciales invalidas" }) }
 
 

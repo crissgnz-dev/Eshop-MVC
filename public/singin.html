@@ -40,15 +40,15 @@
             return;
         }
 
-        const url = '/users/register';
+        const url = 'http://localhost:3000/users/register';
         try {
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    Name: fullName, // Asegúrate que el campo Name coincida con tu base de datos
+                body: JSON.stringify({// Asegúrate que el campo Name coincida con tu base de datos
+                    Name: fullName,
                     Email: email,
                     Pass: password
                 })

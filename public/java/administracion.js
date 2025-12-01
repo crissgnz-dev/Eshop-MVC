@@ -20,7 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
 async function checkAdminAccess(checkUrl) {
     console.log("Verificando acceso de administrador mediante Cookie HTTP-Only...");
     
-    // 🚨 Importante: El token NO se lee de localStorage.
     
     try {
         const response = await fetch(checkUrl, {
@@ -41,10 +40,10 @@ async function checkAdminAccess(checkUrl) {
             try {
                 const errorData = await response.json();
                 errorMessage = errorData.message || errorMessage;
-                console.error(`❌ Fallo la verificación de sesión (${response.status}):`, errorMessage);
+                console.error(` Fallo la verificación de sesión (${response.status}):`, errorMessage);
             } catch (e) {
                 errorMessage = `Error del servidor: ${response.status}. Redirigiendo a login.`;
-                console.error(`❌ Fallo la verificación de sesión (${response.status}). Respuesta no JSON.`);
+                console.error(` Fallo la verificación de sesión (${response.status}). Respuesta no JSON.`);
             }
             
             // Limpiamos el token viejo (por si acaso había uno)
@@ -57,7 +56,7 @@ async function checkAdminAccess(checkUrl) {
         }
     } catch (error) {
         // Esto captura errores de red
-        console.error("❌ Error de conexión al verificar la sesión. El servidor podría estar caído.", error);
+        console.error("Error de conexión al verificar la sesión. El servidor podría estar caído.", error);
         
         setTimeout(() => {
             window.location.href = 'login.html';
