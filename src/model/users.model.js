@@ -6,7 +6,7 @@ export const getUserByEmail = async(email) => {
         const connection = await pool.getConnection();
         const [rows] = await connection.query(sql, [email]);
         connection.release(); 
-        return rows                
+        return rows                
     } catch (error) {
         return error
     }
@@ -32,7 +32,7 @@ export const getUserById = async(id) => {
         //hay que pasale el sql y el dato que reemplaza el signo ?
         connection.release();
         // console.log(rows)
-        return rows         
+        return rows         
     } catch (error) {
         // console.log(error)
         return error
@@ -47,7 +47,7 @@ export const updateUser= async(id, values) => {
         connection.release();
         // console.log(rows)
         return rows
-       
+        
     } catch (error) {
         return error
     }
@@ -63,5 +63,23 @@ export const deleteUser = async(id) => {
         return rows
     } catch (error) {
       return error
+    }
+}
+
+/**
+ * Función para obtener todos los usuarios, excluyendo la contraseña.
+ * Utilizada por el panel de administración.
+ */
+export const getAllUsersModel = async() => {
+    // Es crucial seleccionar SOLO las columnas necesarias y omitir 'Pass'.
+    const sql = "SELECT ID_user, Name, Email, Image, Type_user FROM users";
+    try {
+        const connection = await pool.getConnection();
+        const [rows] = await connection.query(sql);
+        connection.release();
+        return rows;
+    } catch (error) {
+        console.error("Error en getAllUsersModel:", error);
+        return error;
     }
 }

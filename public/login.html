@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <link rel="icon" type="image/icon" href="./img/favicon.ico">
-    <title>login</title>
+ <meta charset="UTF-8">
+ <meta http-equiv="X-UA-Compatible" content="IE=edge">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+ <link rel="icon" type="image/icon" href="./img/favicon.ico">
+ <title>Login</title>
 
 <link rel="stylesheet" href="css/login.css">
 <link rel="stylesheet" href="css/estilos.css">
@@ -18,23 +18,21 @@
 <body class="body">
 
 
-     <!-- Codigo del login--> 
-     <section>
-<form class="form-control" action="">
-    <p class="title">Acceso</p>
-    <div class="input-field">
-      <input required="" class="input" type="text" />
-      <label class="label" for="input">Enter Email</label>
-    </div>
-    <div class="input-field">
-      <input required="" class="input" type="password" />
-      <label class="label" for="input">Enter Password</label>
-    </div>
-    <a href="RecoverPassword.html">¿Olvidaste tu contraseña?</a>
-    <button class="submit-btn">Inscribirse</button>
-  </form>  
-  </section>
+<section>
+<form class="form-control" id="loginForm">
+ <p class="title">Acceso</p>
+ <div class="input-field">
+ <input required="" class="input" type="email" id="email" name="email" />
+ <label class="label" for="email">Enter Email</label>
+ </div>
+ <div class="input-field">
+ <input required="" class="input" type="password" id="password" name="password" />
+ <label class="label" for="password">Enter Password</label>
+ </div>
+ <a href="RecoverPassword.html">¿Olvidaste tu contraseña?</a>
+ <button class="submit-btn" type="submit">Iniciar Sesión</button> </form>
+</section>
 
-  <script src="java/script.js"></script>
+<script src="java/script.js"></script>
 </body>
 </html>
