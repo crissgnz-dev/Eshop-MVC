@@ -1,60 +1,66 @@
 // public/java/administracion.js
+// Lógica principal del panel de administración
+// ESTE ARCHIVO YA NO USA localStorage.getItem('adminToken')
+// Confía en que la cookie 'access_token' será enviada automáticamente
+// gracias a 'credentials: include' o por ser el mismo dominio.
 
 document.addEventListener('DOMContentLoaded', () => {
-    // URL de una ruta protegida de administración, por ejemplo, para obtener datos de productos
-    // Opcionalmente, puedes crear una ruta simple /api/users/admin/check para solo verificar el token
-    const ADMIN_CHECK_URL = 'http://localhost:3000/api/productos'; // Usaremos una ruta de ejemplo que debe estar protegida
+    // URL que verifica el token en la cookie y el rol 'admin'
+    const ADMIN_CHECK_URL = 'http://localhost:3000/users/verify-admin-session'; 
 
     checkAdminAccess(ADMIN_CHECK_URL);
     
-    // Aquí iría el resto de la lógica de tu panel de administración (CRUD de productos, etc.)
-    
-    // Ejemplo de cómo harías una llamada protegida
-    // fetchProducts(ADMIN_CHECK_URL);
+    // Aquí iría el resto de la lógica del panel (CRUD de productos, etc.)
 });
 
 /**
- * Verifica si el usuario tiene un token de administrador válido.
+ * Verifica si el usuario tiene una sesión de administrador válida (a través de la cookie).
  * Si falla, redirige al login.
  */
 async function checkAdminAccess(checkUrl) {
-    const adminToken = localStorage.getItem('adminToken');
-
-    if (!adminToken) {
-        // No hay token, acceso denegado inmediatamente
-        alert("Acceso denegado. Por favor, inicie sesión como administrador.");
-        window.location.href = 'login.html';
-        return;
-    }
+    console.log("Verificando acceso de administrador mediante Cookie HTTP-Only...");
     
-    // Si hay token, hacemos una llamada a una ruta protegida
+    // 🚨 Importante: El token NO se lee de localStorage.
+    
     try {
         const response = await fetch(checkUrl, {
             method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                // 🚨 ENVIAMOS EL TOKEN AL BACKEND PARA SU VERIFICACIÓN DE ROL
-                'Authorization': `Bearer ${adminToken}`
-            }
+            // 🔑 CRUCIAL: Esto garantiza que la Cookie 'access_token' sea enviada.
+            credentials: 'include',
         });
 
-        if (response.ok) {
-            // Token y rol verificados por el middleware (verify-token.js)
-            console.log("Acceso de administrador verificado. Cargando panel...");
-            // Continúa la ejecución normal del script (aquí cargarías el contenido del panel)
+        if (response.status === 202) {
+            // El servidor respondió 202 (Accepted) -> Cookie válida y Rol de Admin verificado.
+            const userData = await response.json();
+            console.log("✅ Acceso de administrador verificado. Bienvenido:", userData.user.email);
+            // La UI puede cargarse aquí con seguridad.
         } else {
-            // El backend devolvió 401 (Token inválido/expirado) o 403 (Rol incorrecto)
-            const errorData = await response.json();
-            console.error("Fallo la verificación de token:", errorData.message);
+            // El servidor devolvió 401 (Unauthorized) o 403 (Forbidden)
             
-            // Limpiamos el token viejo y redirigimos
+            let errorMessage = "Acceso denegado. Por favor, vuelva a iniciar sesión.";
+            try {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+                console.error(`❌ Fallo la verificación de sesión (${response.status}):`, errorMessage);
+            } catch (e) {
+                errorMessage = `Error del servidor: ${response.status}. Redirigiendo a login.`;
+                console.error(`❌ Fallo la verificación de sesión (${response.status}). Respuesta no JSON.`);
+            }
+            
+            // Limpiamos el token viejo (por si acaso había uno)
             localStorage.removeItem('adminToken');
-            alert(`Acceso denegado: ${errorData.message}`);
-            window.location.href = 'login.html';
+            
+            // Redirigimos al login
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 100);
         }
     } catch (error) {
-        console.error("Error de conexión al verificar el token:", error);
-        alert("Error de conexión con el servidor. Acceso denegado.");
-        window.location.href = 'login.html';
+        // Esto captura errores de red
+        console.error("❌ Error de conexión al verificar la sesión. El servidor podría estar caído.", error);
+        
+        setTimeout(() => {
+            window.location.href = 'login.html';
+        }, 100);
     }
 }

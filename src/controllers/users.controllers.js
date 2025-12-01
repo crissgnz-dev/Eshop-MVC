@@ -30,10 +30,7 @@ export const register = async (req, res) => {
     const passwordHash = await bcrypt.hash(Pass, 10)
     req.body.Pass = passwordHash //coloco en req.body la contraseña encriptada
 
-    // 🔑 CAMBIO 1: Asegurar que el usuario registrado sea por defecto un cliente (Type_user = 0)
-    // Asumo que el modelo de creación de usuario puede aceptar Type_user, o si no lo recibe, lo crea como 0.
-    // Si la tabla users tiene un Type_user por defecto, esto puede omitirse,
-    // pero es más seguro definirlo si no lo envías desde el frontend.
+    // 🔑 CAMBIO: Asegurar que el usuario registrado sea por defecto un cliente (Type_user = 0)
     if (!req.body.Type_user) {
         req.body.Type_user = 0; // 0 para clientes
     }
@@ -73,12 +70,10 @@ export const login = async (req, res) => {
         return res.status(401).json({ message: "Credenciales invalidas" })
     }
 
-    // 🔑 Creamos el payload del token de CLIENTE
+    // Creamos el payload del token de CLIENTE
     const payload = { 
         id: user[0].ID_user, 
         name: user[0].Name, 
-        // 🔑 CAMBIO 2: Si el usuario es cliente, el rol es 'client'. Si es admin, aún entraría aquí 
-        // pero lo manejaremos con loginAdmin para separarlos.
         role: (user[0].Type_user === 1) ? 'admin' : 'client'
     }
     
@@ -218,7 +213,7 @@ export const deleteAccount = async(req, res) => {
     //row devuelve muchos datos entre ellos "affectedRows" cantidad de registros afectados, 
     // si es igual a cero no se modifico ningun registro
     if (rows.affectedRows == 0) { return res.status(404).json({message: 'El usuario no existe'}) }
-        //eliminamos la cookie del token
+        //eliminamos la cookie del token
     res.clearCookie("access_token").json({message:'Cuenta eliminada'})
 }
 
@@ -241,4 +236,46 @@ export const uploadImage = async(req, res) => {
     //  si es igual a cero no se modifico ningun registro
     if (rows.affectedRows == 0) { return res.status(404).json({message: 'El usuario no existe'}) }
     res.json({message: 'datos actualizados'})
-}
+} 
+
+
+// =========================================================================
+// FUNCIÓN AÑADIDA: Obtener todos los usuarios (Ruta protegida para Admin)
+// =========================================================================
+
+/**
+ * @route GET /api/users/admin/users
+ * @desc Obtiene una lista de todos los usuarios registrados.
+ * Requiere el middleware verifyAdminToken (verify-token.js) para asegurar que solo los administradores accedan.
+ * @access Private (Admin)
+ */
+export const getAllUsers = async (req, res) => {
+    // 🚨 NOTA: El middleware verifyToken (para Admin) ya comprobó que req.user.role === 'admin'
+    // y el payload del token está en req.user
+    
+    try {
+        // Asumiendo que el modelo (users.model.js) tiene un método para obtener todos los usuarios.
+        // Debe ser un método que NO devuelva la columna 'Pass' (contraseña hasheada) por seguridad.
+        const users = await model.getAllUsers(); // Ajusta el nombre del método según tu modelo
+
+        if (users.errno) { 
+            // Manejo de errores de la base de datos
+            return res.status(500).json({ message: `Error en consulta al obtener usuarios: ${users.errno}` });
+        }
+        
+        if (!users || users.length === 0) {
+            // Si la consulta fue exitosa pero no hay usuarios (o solo está el admin)
+            return res.status(404).json({ message: "No se encontraron usuarios registrados." });
+        }
+
+        // Éxito: devolver la lista de usuarios.
+        res.status(200).json({ 
+            message: "Lista de usuarios obtenida con éxito.",
+            users: users
+        });
+
+    } catch (error) {
+        console.error("Error inesperado al obtener la lista de usuarios (Admin):", error);
+        res.status(500).json({ message: "Error interno del servidor al procesar la solicitud." });
+    }
+};

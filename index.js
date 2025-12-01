@@ -25,11 +25,28 @@ const __dirname = dirname(__filename);
 
 // Middlewares Globales
 app.use(express.json());
-// ⚠️ CORS CON CONFIGURACIÓN DE COOKIES: Crucial para el desarrollo con puertos separados
+
+// ⚠️ AJUSTE DE CORS PARA PERMITIR CONEXIÓN DESDE EL FRONT-END (PUERTO 5500)
+// Esto soluciona el error "Access-Control-Allow-Origin"
+const allowedOrigins = [
+    'http://localhost:3000',      // Mismo origen del servidor
+    'http://127.0.0.1:5500',      // Típico de Live Server
+    'http://localhost:5500',      // Otra variación común de Live Server
+];
+
 app.use(cors({ 
-    origin: 'http://localhost:3000', // Permite solicitudes del mismo origen (frontend y backend en 3000)
+    origin: function (origin, callback) {
+        // Permitir solicitudes sin origen (como clientes REST o peticiones del mismo servidor)
+        if (!origin) return callback(null, true); 
+        if (allowedOrigins.indexOf(origin) === -1) {
+            const msg = 'La política de CORS no permite el acceso desde el origen especificado: ' + origin;
+            return callback(new Error(msg), false);
+        }
+        return callback(null, true);
+    },
     credentials: true // Crucial para permitir el envío y recepción de cookies
 })); 
+
 app.use(cookieParser());
 
 // =======================================================
